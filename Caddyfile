@@ -1,0 +1,14 @@
+:{$PORT} {
+	# if you have 80 and 443 open on the ollama server, you can specify tls and caddy automatically sets up SSL for you such that external connectors securely connect to your Ollama API with SSL and do not complain about certificates
+	# tls somemail@mail.com
+	
+	@requireAuth {
+		not header Authorization "Bearer {$API_KEY}"
+	}
+
+	respond @requireAuth "Unauthorized" 401
+
+	reverse_proxy localhost:{$OLLAMA_PORT} {
+		header_up Host 127.0.0.1:{$OLLAMA_PORT}
+	}
+}
